@@ -134,8 +134,9 @@ M.execute = function(args)
   end
 
   -- Handle setting git ref
-  local git_base_changed = state.git_base ~= args.git_base
+  local git_base_changed = false
   if utils.truthy(args.git_base) then
+    git_base_changed = state.git_base ~= args.git_base
     state.git_base = args.git_base
   end
 
@@ -151,10 +152,15 @@ M.execute = function(args)
   end
 
   -- All set, now show or focus the window
+  print("path_changed: " .. vim.inspect(path_changed))
+  print("do_reveal: " .. vim.inspect(do_reveal))
+  print("git_base_changed: " .. vim.inspect(git_base_changed))
+  print("state.dirty: " .. vim.inspect(state.dirty))
   local force_navigate = path_changed or do_reveal or git_base_changed or state.dirty
   --if position_changed and args.position ~= "current" and current_position ~= "current" then
   --  manager.close(args.source)
   --end
+  print("force_navigate = " .. vim.inspect(force_navigate))
   if do_reveal then
     handle_reveal(args, state)
   else
@@ -180,6 +186,8 @@ do_show_or_focus = function(args, state, force_navigate)
       end
     end
   end
+
+  print("window exists: " .. vim.inspect(window_exists))
 
   if args.action == "show" then
     -- "show" means show the window without focusing it
