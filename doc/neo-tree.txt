@@ -166,7 +166,7 @@ current file, or if in an unsaved file, the current working directory.
       reveal_force_cwd = true,   -- change cwd without asking if needed
     })
     end,
-    {description: "Open neo-tree at current file or working directory"}
+    { desc = "Open neo-tree at current file or working directory" }
   );
 <
 
@@ -1430,6 +1430,29 @@ have.
 
 "neo_tree_popup_buffer_leave"~
 Fired after leaving a neo-tree popup buffer.
+
+"neo_tree_popup_input_ready"~
+Fired after NuiInput is ready. Use this event to default to normal mode etc.
+This is fired inside a vim.schedule.
+
+>lua
+    {
+      event = "neo_tree_popup_input_ready",
+      handler = function()
+        -- enter input popup with normal mode by default.
+        vim.cmd("stopinsert")
+      end,
+    },
+    {
+      event = "neo_tree_popup_input_ready",
+      ---@param args { bufnr: integer, winid: integer }
+      handler = function(args)
+        -- map <esc> to enter normal mode (by default closes prompt)
+        -- don't forget `opts.buffer` to specify the buffer of the popup.
+        vim.keymap.set("i", "<esc>", vim.cmd.stopinsert, { noremap = true, buffer = args.bufnr })
+      end,
+    }
+<
 
 "neo_tree_window_before_open"~
 Fired before opening a new Neo-tree window. Called with the following arg:
